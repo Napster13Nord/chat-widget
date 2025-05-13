@@ -646,7 +646,9 @@
                 ...window.ChatWidgetConfig.style,
                 // Force purple colors if user provided purple
                 primaryColor: window.ChatWidgetConfig.style?.primaryColor === '#854fff' ? '#7586D2' : (window.ChatWidgetConfig.style?.primaryColor || '#7586D2'),
-                secondaryColor: window.ChatWidgetConfig.style?.secondaryColor === '#6b3fd4' ? '#6476C2' : (window.ChatWidgetConfig.style?.secondaryColor || '#6476C2')
+                secondaryColor: window.ChatWidgetConfig.style?.secondaryColor === '#6b3fd4' ? '#6476C2' : (window.ChatWidgetConfig.style?.secondaryColor || '#6476C2'),
+                // Force position to right
+                position: 'right'
             },
             suggestedQuestions: window.ChatWidgetConfig.suggestedQuestions || defaultSettings.suggestedQuestions
         } : defaultSettings;
