@@ -133,6 +133,7 @@
             color: var(--chat-color-text);
             margin-bottom: 24px;
             line-height: 1.3;
+            letter-spacing: 0;
         }
 
         .chat-assist-widget .chat-start-btn {
@@ -145,7 +146,7 @@
             background: linear-gradient(135deg, var(--chat-color-primary) 0%, var(--chat-color-secondary) 100%);
             color: white;
             border: none;
-            border-radius: var(--chat-radius-md);
+            border-radius: 30px;
             cursor: pointer;
             font-size: 15px;
             transition: var(--chat-transition);
@@ -153,6 +154,7 @@
             font-family: inherit;
             margin-bottom: 16px;
             box-shadow: var(--chat-shadow-md);
+            letter-spacing: inherit;
         }
 
         .chat-assist-widget .chat-start-btn:hover {
@@ -380,6 +382,7 @@
             text-align: center;
             background: var(--chat-color-surface);
             border-top: 1px solid var(--chat-color-light);
+            display: none;
         }
 
         .chat-assist-widget .chat-footer-link {
@@ -389,6 +392,7 @@
             opacity: 0.8;
             transition: var(--chat-transition);
             font-family: inherit;
+            display: none;
         }
 
         .chat-assist-widget .chat-footer-link:hover {
@@ -457,6 +461,7 @@
             color: var(--chat-color-text);
             margin-bottom: 16px;
             line-height: 1.3;
+            letter-spacing: 0;
         }
 
         .chat-assist-widget .registration-form {
@@ -513,13 +518,14 @@
             background: linear-gradient(135deg, var(--chat-color-primary) 0%, var(--chat-color-secondary) 100%);
             color: white;
             border: none;
-            border-radius: var(--chat-radius-md);
+            border-radius: 30px;
             cursor: pointer;
             font-size: 15px;
             transition: var(--chat-transition);
             font-weight: 600;
             font-family: inherit;
             box-shadow: var(--chat-shadow-md);
+            letter-spacing: inherit;
         }
 
         .chat-assist-widget .submit-registration:hover {
