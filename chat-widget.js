@@ -14,23 +14,24 @@
     const widgetStyles = document.createElement('style');
     widgetStyles.textContent = `
         .chat-assist-widget {
-            --chat-color-primary: var(--chat-widget-primary, #10b981);
-            --chat-color-secondary: var(--chat-widget-secondary, #059669);
-            --chat-color-tertiary: var(--chat-widget-tertiary, #047857);
-            --chat-color-light: var(--chat-widget-light, #d1fae5);
+            --chat-color-primary: var(--chat-widget-primary, #7586D2);
+            --chat-color-secondary: var(--chat-widget-secondary, #6476C2);
+            --chat-color-tertiary: var(--chat-widget-tertiary, #5366B2);
+            --chat-color-light: var(--chat-widget-light, #E6E9F7);
             --chat-color-surface: var(--chat-widget-surface, #ffffff);
             --chat-color-text: var(--chat-widget-text, #1f2937);
             --chat-color-text-light: var(--chat-widget-text-light, #6b7280);
             --chat-color-border: var(--chat-widget-border, #e5e7eb);
-            --chat-shadow-sm: 0 1px 3px rgba(16, 185, 129, 0.1);
-            --chat-shadow-md: 0 4px 6px rgba(16, 185, 129, 0.15);
-            --chat-shadow-lg: 0 10px 15px rgba(16, 185, 129, 0.2);
+            --chat-shadow-sm: 0 1px 3px rgba(117, 134, 210, 0.1);
+            --chat-shadow-md: 0 4px 6px rgba(117, 134, 210, 0.15);
+            --chat-shadow-lg: 0 10px 15px rgba(117, 134, 210, 0.2);
             --chat-radius-sm: 8px;
             --chat-radius-md: 12px;
             --chat-radius-lg: 20px;
             --chat-radius-full: 9999px;
             --chat-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.3px;
         }
 
         .chat-assist-widget .chat-window {
@@ -38,7 +39,7 @@
             bottom: 90px;
             z-index: 1000;
             width: 380px;
-            height: 580px;
+            height: 520px;
             background: var(--chat-color-surface);
             border-radius: var(--chat-radius-lg);
             box-shadow: var(--chat-shadow-lg);
@@ -334,6 +335,7 @@
         .chat-assist-widget .chat-launcher {
             position: fixed;
             bottom: 20px;
+            width: 56px;
             height: 56px;
             border-radius: var(--chat-radius-full);
             background: linear-gradient(135deg, var(--chat-color-primary) 0%, var(--chat-color-secondary) 100%);
@@ -345,8 +347,8 @@
             transition: var(--chat-transition);
             display: flex;
             align-items: center;
-            padding: 0 20px 0 16px;
-            gap: 8px;
+            justify-content: center;
+            padding: 0;
         }
 
         .chat-assist-widget .chat-launcher.right-side {
@@ -550,8 +552,8 @@
             }
         },
         style: {
-            primaryColor: '#10b981', // Green
-            secondaryColor: '#059669', // Darker green
+            primaryColor: '#7586D2', // Purple
+            secondaryColor: '#6476C2', // Darker purple
             position: 'right',
             backgroundColor: '#ffffff',
             fontColor: '#1f2937'
@@ -567,9 +569,9 @@
             style: { 
                 ...defaultSettings.style, 
                 ...window.ChatWidgetConfig.style,
-                // Force green colors if user provided purple
-                primaryColor: window.ChatWidgetConfig.style?.primaryColor === '#854fff' ? '#10b981' : (window.ChatWidgetConfig.style?.primaryColor || '#10b981'),
-                secondaryColor: window.ChatWidgetConfig.style?.secondaryColor === '#6b3fd4' ? '#059669' : (window.ChatWidgetConfig.style?.secondaryColor || '#059669')
+                // Force purple colors if user provided purple
+                primaryColor: window.ChatWidgetConfig.style?.primaryColor === '#854fff' ? '#7586D2' : (window.ChatWidgetConfig.style?.primaryColor || '#7586D2'),
+                secondaryColor: window.ChatWidgetConfig.style?.secondaryColor === '#6b3fd4' ? '#6476C2' : (window.ChatWidgetConfig.style?.secondaryColor || '#6476C2')
             },
             suggestedQuestions: window.ChatWidgetConfig.suggestedQuestions || defaultSettings.suggestedQuestions
         } : defaultSettings;
@@ -655,8 +657,7 @@
     launchButton.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-        </svg>
-        <span class="chat-launcher-text">Need help?</span>`;
+        </svg>`;
     
     // Add elements to DOM
     widgetRoot.appendChild(chatWindow);
