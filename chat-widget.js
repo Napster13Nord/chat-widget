@@ -407,6 +407,17 @@
             align-items: center;
             justify-content: center;
             padding: 0;
+            right: 20px; /* Force right positioning */
+            left: auto; /* Ensure no left positioning */
+        }
+
+        .chat-assist-widget .chat-launcher.right-side {
+            right: 20px;
+            left: auto;
+        }
+
+        .chat-assist-widget .chat-launcher.left-side {
+            display: none !important; /* Completely hide any left-side launcher */
         }
 
         @media (max-width: 480px) {
@@ -414,14 +425,17 @@
                 bottom: 16px;
                 width: 52px;
                 height: 52px;
+                right: 16px; /* Force right positioning on mobile */
+                left: auto;
             }
             
             .chat-assist-widget .chat-launcher.right-side {
                 right: 16px;
+                left: auto;
             }
             
             .chat-assist-widget .chat-launcher.left-side {
-                left: 16px;
+                display: none !important;
             }
         }
 
