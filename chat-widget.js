@@ -382,7 +382,7 @@
             text-align: center;
             background: var(--chat-color-surface);
             border-top: 1px solid var(--chat-color-light);
-            display: none;
+            content-visibility: hidden;
         }
 
         .chat-assist-widget .chat-footer-link {
@@ -392,7 +392,7 @@
             opacity: 0.8;
             transition: var(--chat-transition);
             font-family: inherit;
-            display: none;
+            content-visibility: hidden;
         }
 
         .chat-assist-widget .chat-footer-link:hover {
