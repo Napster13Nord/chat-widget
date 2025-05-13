@@ -58,6 +58,7 @@
 
         .chat-assist-widget .chat-window.left-side {
             left: 20px;
+            display: none; /* Hide any left-side positioning */
         }
 
         .chat-assist-widget .chat-window.visible {
@@ -670,7 +671,7 @@
 
     // Create chat panel
     const chatWindow = document.createElement('div');
-    chatWindow.className = `chat-window ${settings.style.position === 'left' ? 'left-side' : 'right-side'}`;
+    chatWindow.className = `chat-window right-side`;
     
     // Create welcome screen with header
     const welcomeScreenHTML = `
@@ -730,7 +731,7 @@
     
     // Create toggle button
     const launchButton = document.createElement('button');
-    launchButton.className = `chat-launcher ${settings.style.position === 'left' ? 'left-side' : 'right-side'}`;
+    launchButton.className = `chat-launcher right-side`;
     launchButton.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
