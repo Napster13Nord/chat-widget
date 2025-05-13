@@ -382,7 +382,7 @@
             text-align: center;
             background: var(--chat-color-surface);
             border-top: 1px solid var(--chat-color-light);
-            content-visibility: hidden;
+            display: none;
         }
 
         .chat-assist-widget .chat-footer-link {
@@ -392,7 +392,7 @@
             opacity: 0.8;
             transition: var(--chat-transition);
             font-family: inherit;
-            content-visibility: hidden;
+            display: none;
         }
 
         .chat-assist-widget .chat-footer-link:hover {
@@ -552,6 +552,9 @@
             name: '',
             welcomeText: '',
             responseTimeText: '',
+            poweredBy: {
+                text: 'Powered by n8n',
+                link: 'https://n8n.partnerlinks.io/fabimarkl'
             }
         },
         style: {
