@@ -386,90 +386,6 @@
             right: 20px;
         }
 
-        .chat-assist-widget .chat-notification {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            max-width: 280px;
-            z-index: 998;
-            border: 1px solid #e5e7eb;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-            pointer-events: none;
-        }
-
-        .chat-assist-widget .chat-notification.visible {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        .chat-assist-widget .chat-notification-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--chat-color-light);
-            flex-shrink: 0;
-        }
-
-        .chat-assist-widget .chat-notification-content {
-            flex: 1;
-        }
-
-        .chat-assist-widget .chat-notification-title {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--chat-color-text);
-            margin: 0 0 4px 0;
-            line-height: 1.3;
-        }
-
-        .chat-assist-widget .chat-notification-subtitle {
-            font-size: 13px;
-            color: var(--chat-color-text-light);
-            margin: 0;
-            line-height: 1.3;
-        }
-
-        .chat-assist-widget .chat-notification-close {
-            background: none;
-            border: none;
-            color: var(--chat-color-text-light);
-            cursor: pointer;
-            font-size: 18px;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: var(--chat-transition);
-            flex-shrink: 0;
-        }
-
-        .chat-assist-widget .chat-notification-close:hover {
-            background: #f3f4f6;
-            color: var(--chat-color-text);
-        }
-
-        @media (max-width: 480px) {
-            .chat-assist-widget .chat-notification {
-                right: 16px;
-                left: 16px;
-                max-width: none;
-                bottom: 90px;
-            }
-        }
-
         .chat-assist-widget .user-registration {
             position: absolute;
             top: 50%;
@@ -699,7 +615,7 @@
         <div class="chat-welcome">
             <h2 class="chat-welcome-title">${settings.branding.welcomeText || t.welcomeText}</h2>
             <button class="chat-start-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
                 ${t.startChatText}
@@ -730,7 +646,7 @@
             <div class="chat-controls">
                 <textarea class="chat-textarea" placeholder="${t.messagePlaceholder}" rows="1"></textarea>
                 <button class="chat-submit">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M22 2L11 13"></path>
                         <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
                     </svg>
@@ -745,25 +661,11 @@
     launchButton.className = 'chat-launcher right-side';
     launchButton.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 5v14"></path>
-            <path d="M5 12h14"></path>
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
         </svg>`;
-    
-    // Create notification
-    const chatNotification = document.createElement('div');
-    chatNotification.className = 'chat-notification';
-    chatNotification.innerHTML = `
-        <img class="chat-notification-avatar" src="${ANNA_AVATAR_URL}" alt="Anna">
-        <div class="chat-notification-content">
-            <p class="chat-notification-title">${settings.language === 'pt' ? 'Precisa de ajuda?' : 'Need help?'}</p>
-            <p class="chat-notification-subtitle">${settings.language === 'pt' ? 'Respondemos em 5 minutos' : 'We respond within 5 minutes'}</p>
-        </div>
-        <button class="chat-notification-close">×</button>
-    `;
     
     widgetRoot.appendChild(chatWindow);
     widgetRoot.appendChild(launchButton);
-    widgetRoot.appendChild(chatNotification);
     document.body.appendChild(widgetRoot);
 
     // Get DOM elements
@@ -1040,40 +942,5 @@
         button.addEventListener('click', () => {
             chatWindow.classList.remove('visible');
         });
-    });
-
-    // Notification logic
-    const notificationCloseBtn = chatNotification.querySelector('.chat-notification-close');
-    let notificationDismissed = localStorage.getItem('chat-notification-dismissed') === 'true';
-    
-    // Show notification after a delay if not dismissed
-    if (!notificationDismissed) {
-        setTimeout(() => {
-            chatNotification.classList.add('visible');
-        }, 3000); // Show after 3 seconds
-    }
-    
-    // Hide notification when close button is clicked
-    notificationCloseBtn.addEventListener('click', () => {
-        chatNotification.classList.remove('visible');
-        localStorage.setItem('chat-notification-dismissed', 'true');
-        notificationDismissed = true;
-    });
-    
-    // Hide notification when chat is opened
-    launchButton.addEventListener('click', () => {
-        chatWindow.classList.toggle('visible');
-        if (chatWindow.classList.contains('visible')) {
-            chatNotification.classList.remove('visible');
-        }
-    });
-    
-    // Show notification again when chat is closed (if not permanently dismissed)
-    chatWindow.addEventListener('transitionend', () => {
-        if (!chatWindow.classList.contains('visible') && !notificationDismissed) {
-            setTimeout(() => {
-                chatNotification.classList.add('visible');
-            }, 2000); // Show again after 2 seconds of closing chat
-        }
     });
 })(); 
