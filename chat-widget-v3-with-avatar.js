@@ -939,19 +939,60 @@
         
         const bubble = document.createElement('div');
         bubble.className = 'chat-bubble bot-bubble';
-        bubble.innerHTML = linkifyText(messageText);
+        bubble.innerHTML = processMessageHTML(messageText);
         
         container.appendChild(avatar);
         container.appendChild(bubble);
         return container;
     }
 
-    // Function to convert URLs in text to clickable links
+    // Function to sanitize and process HTML from n8n
+    function processMessageHTML(text) {
+        // First, convert plain URLs to links (for backward compatibility)
+        let processedText = linkifyText(text);
+        
+        // Then allow safe HTML tags from n8n
+        // This is safe because we only allow specific tags
+        const allowedTags = ['a', 'strong', 'b', 'em', 'i', 'br', 'p', 'span'];
+        const tagPattern = new RegExp(`<(\/?)(?:${allowedTags.join('|')})(?:\\s[^>]*)?>`, 'gi');
+        
+        // Keep allowed tags, remove others
+        processedText = processedText.replace(/<[^>]*>/g, function(tag) {
+            if (tagPattern.test(tag)) {
+                // For anchor tags, ensure they have proper attributes
+                if (tag.toLowerCase().includes('<a ')) {
+                    if (!tag.includes('target=')) {
+                        tag = tag.replace('<a ', '<a target="_blank" rel="noopener noreferrer" ');
+                    }
+                    if (!tag.includes('class=')) {
+                        tag = tag.replace('<a ', '<a class="chat-link" ');
+                    } else if (!tag.includes('chat-link')) {
+                        tag = tag.replace('class="', 'class="chat-link ');
+                    }
+                }
+                return tag;
+            }
+            return ''; // Remove disallowed tags
+        });
+        
+        return processedText;
+    }
+
+    // Function to convert URLs in text to clickable links (for backward compatibility)
     function linkifyText(text) {
         // Enhanced URL pattern that matches various URL formats
         const urlPattern = /(https?:\/\/[^\s<>"`{}\[\]\\^]+|www\.[^\s<>"`{}\[\]\\^]+\.[a-z]{2,}[^\s<>"`{}\[\]\\^]*)/gim;
         
         return text.replace(urlPattern, function(url) {
+            // Skip if already inside HTML tags
+            const beforeUrl = text.substring(0, text.indexOf(url));
+            const afterUrl = text.substring(text.indexOf(url) + url.length);
+            
+            // Simple check to avoid double-processing URLs that are already in <a> tags
+            if (beforeUrl.lastIndexOf('<a') > beforeUrl.lastIndexOf('</a>')) {
+                return url; // URL is already inside an <a> tag
+            }
+            
             // Clean up URL (remove trailing punctuation that might not be part of URL)
             const cleanUrl = url.replace(/[.,;!?]+$/, '');
             
