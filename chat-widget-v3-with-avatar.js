@@ -4,8 +4,26 @@
     if (window.N8nChatWidgetLoaded) return;
     window.N8nChatWidgetLoaded = true;
 
-    // Anna's avatar URL
+    const WIDGET_KEY = 'chat-assist-widget';
     const ANNA_AVATAR_URL = 'https://thriveflows.com/wp-content/uploads/2025/06/Anna-Avatar.jpg';
+    let chatWidget = null;
+    let isFirstMessage = true;
+    let userInfo = null;
+    let sessionId = null;
+
+    // Calculate realistic typing duration based on message length
+    function calculateTypingDuration(messageLength) {
+        // Base typing speed: approximately 200 characters per minute (3.33 chars/second)
+        // Add some randomness for more realistic feel
+        const baseSpeed = 3.33; // chars per second
+        const minDuration = 1000; // minimum 1 second
+        const maxDuration = 5000; // maximum 5 seconds
+        
+        const calculatedDuration = (messageLength / baseSpeed) * 1000;
+        const randomFactor = 0.8 + (Math.random() * 0.4); // 0.8 to 1.2 multiplier
+        
+        return Math.max(minDuration, Math.min(maxDuration, calculatedDuration * randomFactor));
+    }
 
     // Load font resource - using Poppins for a fresh look
     const fontElement = document.createElement('link');
@@ -120,6 +138,27 @@
             font-size: 16px;
             font-weight: 600;
             color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .chat-assist-widget .chat-header-status {
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .chat-assist-widget .chat-header-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: onlinePulse 2s infinite;
         }
 
         .chat-assist-widget .chat-close-btn {
@@ -293,6 +332,33 @@
             flex-shrink: 0;
             border: 2px solid var(--chat-color-light);
             box-shadow: var(--chat-shadow-sm);
+            position: relative;
+        }
+
+        /* Online indicator for Anna's avatar */
+        .chat-assist-widget .bot-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            background: #10b981;
+            border: 2px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3);
+            animation: onlinePulse 2s infinite;
+        }
+
+        @keyframes onlinePulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
         }
 
         @media (max-width: 480px) {
@@ -300,6 +366,14 @@
                 width: 32px;
                 height: 32px;
             }
+            
+            .chat-assist-widget .bot-avatar::after {
+                width: 10px;
+                height: 10px;
+                bottom: 1px;
+                right: 1px;
+            }
+            
             .chat-assist-widget .bot-message-container {
                 max-width: 90%;
             }
@@ -307,6 +381,27 @@
 
         .chat-assist-widget .bot-message-container .chat-bubble.bot-bubble {
             margin: 0; /* Remove default margin since it's in container */
+        }
+
+        /* Enhanced typing animation with status text */
+        .chat-assist-widget .typing-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            align-self: flex-start;
+        }
+
+        .chat-assist-widget .typing-status {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .chat-assist-widget .typing-status-text {
+            font-size: 12px;
+            color: var(--chat-color-text-light);
+            font-style: italic;
+            margin-bottom: 2px;
         }
 
         /* Typing animation */
@@ -319,7 +414,6 @@
             border-radius: var(--chat-radius-md);
             border-bottom-left-radius: 4px;
             max-width: 80px;
-            align-self: flex-start;
             box-shadow: var(--chat-shadow-sm);
             border: 1px solid var(--chat-color-light);
         }
@@ -807,7 +901,6 @@
 
     // Session tracking
     let conversationId = '';
-    let isWaitingForResponse = false;
 
     // Create widget DOM structure
     const widgetRoot = document.createElement('div');
@@ -828,7 +921,10 @@
     const welcomeScreenHTML = `
         <div class="chat-header">
             <img class="chat-header-logo" src="${settings.branding.logo}" alt="${settings.branding.name}">
-            <span class="chat-header-title">${settings.branding.name}</span>
+            <div class="chat-header-title">
+                ${settings.branding.name}
+                <span class="chat-header-status">${settings.language === 'pt' ? 'Online' : 'Online'}</span>
+            </div>
             <button class="chat-close-btn">×</button>
         </div>
         <div class="chat-welcome">
@@ -918,11 +1014,17 @@
     // Create typing indicator element - back to original without avatar
     function createTypingIndicator() {
         const indicator = document.createElement('div');
-        indicator.className = 'typing-indicator';
+        indicator.className = 'chat-bubble typing-container';
         indicator.innerHTML = `
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
+            <img class="bot-avatar" src="${ANNA_AVATAR_URL}" alt="Anna">
+            <div class="typing-status">
+                <span class="typing-status-text">${settings.language === 'pt' ? 'Anna está digitando...' : 'Anna is typing...'}</span>
+                <div class="typing-indicator">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
         `;
         return indicator;
     }
@@ -1201,34 +1303,51 @@
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
         try {
+            // Show typing indicator with realistic timing
+            const typingIndicator = createTypingIndicator();
+            chatBody.appendChild(typingIndicator);
+            scrollToBottom();
+
             const response = await fetch(settings.webhook.url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestData)
             });
-            
-            const responseData = await response.json();
-            
-            // Remove typing indicator
-            messagesContainer.removeChild(typingIndicator);
-            
-            // Display bot response with Anna's avatar
-            const responseText = Array.isArray(responseData) ? responseData[0].output : responseData.output;
-            const botMessage = createBotMessage(responseText);
-            messagesContainer.appendChild(botMessage);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            if (response.ok) {
+                const responseData = await response.json();
+                const botMessage = responseData.output || translations.errorMessages.defaultError;
+                
+                // Calculate realistic typing duration based on response length
+                const typingDuration = calculateTypingDuration(botMessage.length);
+                
+                // Wait for typing duration before showing response
+                setTimeout(() => {
+                    // Remove typing indicator
+                    if (typingIndicator && typingIndicator.parentNode) {
+                        typingIndicator.parentNode.removeChild(typingIndicator);
+                    }
+                    
+                    // Create and show bot message
+                    createBotMessage(botMessage);
+                }, typingDuration);
+            } else {
+                // Remove typing indicator on error
+                if (typingIndicator && typingIndicator.parentNode) {
+                    typingIndicator.parentNode.removeChild(typingIndicator);
+                }
+                createBotMessage(translations.errorMessages.defaultError);
+            }
         } catch (error) {
-            console.error('Message submission error:', error);
+            console.error('Error sending message:', error);
             
-            // Remove typing indicator
-            messagesContainer.removeChild(typingIndicator);
+            // Remove any existing typing indicator
+            const existingTyping = chatBody.querySelector('.typing-container');
+            if (existingTyping) {
+                existingTyping.remove();
+            }
             
-            // Show error message with Anna's avatar
-            const errorMessage = createBotMessage(t.sendError);
-            messagesContainer.appendChild(errorMessage);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            createBotMessage(translations.errorMessages.defaultError);
         } finally {
             isWaitingForResponse = false;
         }
@@ -1278,4 +1397,26 @@
             chatWindow.classList.remove('visible');
         });
     });
+
+    function showTypingIndicator() {
+        const typingId = 'typing-indicator';
+        const typingHTML = `
+            <div class="chat-bubble typing-container" id="${typingId}">
+                <img class="bot-avatar" src="${ANNA_AVATAR_URL}" alt="Anna">
+                <div class="typing-status">
+                    <span class="typing-status-text">${settings.language === 'pt' ? 'Anna está digitando...' : 'Anna is typing...'}</span>
+                    <div class="typing-indicator">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        const chatBody = document.querySelector('.chat-assist-widget .chat-body');
+        if (chatBody) {
+            chatBody.insertAdjacentHTML('beforeend', typingHTML);
+            scrollToBottom();
+        }
+    }
 })(); 
