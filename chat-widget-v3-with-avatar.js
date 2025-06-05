@@ -664,6 +664,50 @@
             cursor: not-allowed;
             transform: none;
         }
+
+        /* Tooltip styles */
+        .chat-assist-widget .chat-launcher-tooltip {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: var(--chat-color-text);
+            color: white;
+            padding: 8px 12px;
+            border-radius: var(--chat-radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--chat-transition);
+            box-shadow: var(--chat-shadow-md);
+            z-index: 1001;
+        }
+
+        .chat-assist-widget .chat-launcher-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: 20px;
+            border: 6px solid transparent;
+            border-top-color: var(--chat-color-text);
+        }
+
+        .chat-assist-widget .chat-launcher:hover .chat-launcher-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 480px) {
+            .chat-assist-widget .chat-launcher-tooltip {
+                bottom: 65px;
+                right: -10px;
+                font-size: 13px;
+                padding: 6px 10px;
+            }
+        }
     `;
     document.head.appendChild(widgetStyles);
 
@@ -834,7 +878,8 @@
     launchButton.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-        </svg>`;
+        </svg>
+        <div class="chat-launcher-tooltip">${settings.language === 'pt' ? 'Fale connosco!' : 'Chat with us!'}</div>`;
     
     // Add elements to DOM
     widgetRoot.appendChild(chatWindow);
