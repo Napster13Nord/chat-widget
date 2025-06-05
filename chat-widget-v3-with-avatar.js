@@ -821,7 +821,7 @@
                 </button>
             </div>
             <div class="chat-footer">
-                <a class="chat-footer-link" href="${settings.branding.poweredBy.link}" target="_blank">${settings.branding.poweredBy.text}</a>
+                <a class="chat-footer-link" href="${settings.branding.poweredBy?.link || '#'}" target="_blank">${settings.branding.poweredBy?.text || ''}</a>
             </div>
         </div>
     `;
