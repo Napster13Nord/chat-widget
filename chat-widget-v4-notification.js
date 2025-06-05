@@ -744,9 +744,9 @@
     const launchButton = document.createElement('button');
     launchButton.className = 'chat-launcher right-side';
     launchButton.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 32" fill="currentColor" width="20" height="23">
-            <path d="M28 16c0 8.837-6.269 16-14 16a15.62 15.62 0 01-6.344-1.318L0 32l2.318-7.656A15.923 15.923 0 010 16C0 7.163 6.269 0 14 0s14 7.163 14 16z"/>
-            <path d="M6 18.5a1.5 1.5 0 111.5-1.5 1.5 1.5 0 01-1.5 1.5zm8 0a1.5 1.5 0 111.5-1.5 1.5 1.5 0 01-1.5 1.5zm8 0a1.5 1.5 0 111.5-1.5 1.5 1.5 0 01-1.5 1.5z" fill="white"/>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
         </svg>`;
     
     // Create notification

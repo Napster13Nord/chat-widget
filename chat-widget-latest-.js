@@ -1,4 +1,4 @@
-// Interactive Chat Widget for n8n
+// Interactive Chat Widget for n8n - Version 3 with Anna Avatar
 (function() {
     // Initialize widget only once
     if (window.N8nChatWidgetLoaded) return;
@@ -13,7 +13,7 @@
     fontElement.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap';
     document.head.appendChild(fontElement);
 
-    // Apply widget styles with completely different design approach
+    // Apply widget styles with Anna avatar support
     const widgetStyles = document.createElement('style');
     widgetStyles.textContent = `
         .chat-assist-widget {
@@ -59,11 +59,6 @@
             right: 20px;
         }
 
-        .chat-assist-widget .chat-window.left-side {
-            left: 20px;
-            display: none; /* Hide any left-side positioning */
-        }
-
         .chat-assist-widget .chat-window.visible {
             display: flex;
             opacity: 1;
@@ -79,21 +74,6 @@
                 left: 16px;
                 right: 16px;
                 max-height: 580px;
-            }
-            
-            .chat-assist-widget .chat-window.right-side,
-            .chat-assist-widget .chat-window.left-side {
-                left: 16px;
-                right: 16px;
-            }
-        }
-        
-        /* Extra small screens */
-        @media (max-width: 360px) {
-            .chat-assist-widget .chat-window {
-                width: calc(100% - 24px);
-                left: 12px;
-                right: 12px;
             }
         }
 
@@ -203,7 +183,7 @@
             display: none;
             flex-direction: column;
             height: 100%;
-            overflow: hidden; /* Prevent overflow */
+            overflow: hidden;
         }
 
         .chat-assist-widget .chat-body.active {
@@ -218,65 +198,10 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            max-height: calc(100% - 70px); /* Ensure messages don't push out controls */
+            max-height: calc(100% - 70px);
         }
 
-        @media (max-width: 480px) {
-            .chat-assist-widget .chat-messages {
-                padding: 16px;
-            }
-        }
-
-        .chat-assist-widget .chat-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .chat-assist-widget .chat-messages::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .chat-assist-widget .chat-messages::-webkit-scrollbar-thumb {
-            background-color: rgba(16, 185, 129, 0.3);
-            border-radius: var(--chat-radius-full);
-        }
-
-        .chat-assist-widget .chat-bubble {
-            padding: 14px 18px;
-            border-radius: var(--chat-radius-md);
-            max-width: 85%;
-            word-wrap: break-word;
-            font-size: 14px;
-            line-height: 1.6;
-            position: relative;
-            white-space: pre-line; /* This preserves line breaks */
-        }
-
-        @media (max-width: 480px) {
-            .chat-assist-widget .chat-bubble {
-                padding: 12px 16px;
-                font-size: 14px;
-                max-width: 90%;
-            }
-        }
-
-        .chat-assist-widget .chat-bubble.user-bubble {
-            background: linear-gradient(135deg, var(--chat-color-primary) 0%, var(--chat-color-secondary) 100%);
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-            box-shadow: var(--chat-shadow-sm);
-        }
-
-        .chat-assist-widget .chat-bubble.bot-bubble {
-            background: white;
-            color: var(--chat-color-text);
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            box-shadow: var(--chat-shadow-sm);
-            border: 1px solid var(--chat-color-light);
-        }
-
-        /* Bot message container with avatar - ONLY NEW ADDITION */
+        /* Bot message container with avatar */
         .chat-assist-widget .bot-message-container {
             display: flex;
             align-items: flex-start;
@@ -305,11 +230,49 @@
             }
         }
 
-        .chat-assist-widget .bot-message-container .chat-bubble.bot-bubble {
+        .chat-assist-widget .chat-bubble {
+            padding: 14px 18px;
+            border-radius: var(--chat-radius-md);
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.6;
+            position: relative;
+            white-space: pre-line;
+        }
+
+        @media (max-width: 480px) {
+            .chat-assist-widget .chat-bubble {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
+
+        .chat-assist-widget .chat-bubble.user-bubble {
+            background: linear-gradient(135deg, var(--chat-color-primary) 0%, var(--chat-color-secondary) 100%);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            box-shadow: var(--chat-shadow-sm);
+            max-width: 85%;
+        }
+
+        .chat-assist-widget .chat-bubble.bot-bubble {
+            background: white;
+            color: var(--chat-color-text);
+            border-bottom-left-radius: 4px;
+            box-shadow: var(--chat-shadow-sm);
+            border: 1px solid var(--chat-color-light);
             margin: 0; /* Remove default margin since it's in container */
         }
 
-        /* Typing animation */
+        /* Typing animation with avatar */
+        .chat-assist-widget .typing-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            align-self: flex-start;
+        }
+
         .chat-assist-widget .typing-indicator {
             display: flex;
             align-items: center;
@@ -319,7 +282,6 @@
             border-radius: var(--chat-radius-md);
             border-bottom-left-radius: 4px;
             max-width: 80px;
-            align-self: flex-start;
             box-shadow: var(--chat-shadow-sm);
             border: 1px solid var(--chat-color-light);
         }
@@ -360,16 +322,10 @@
             border-top: 1px solid var(--chat-color-light);
             display: flex;
             gap: 10px;
-            min-height: 70px; /* Ensure controls have minimum height */
-            flex-shrink: 0; /* Prevent controls from shrinking */
-            position: relative; /* Ensure it stays at the bottom */
-            z-index: 2; /* Layer above messages */
-        }
-
-        @media (max-width: 480px) {
-            .chat-assist-widget .chat-controls {
-                padding: 12px;
-            }
+            min-height: 70px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
         }
 
         .chat-assist-widget .chat-textarea {
@@ -388,22 +344,10 @@
             transition: var(--chat-transition);
         }
 
-        @media (max-width: 480px) {
-            .chat-assist-widget .chat-textarea {
-                padding: 12px 14px;
-                font-size: 14px;
-                min-height: 44px;
-            }
-        }
-
         .chat-assist-widget .chat-textarea:focus {
             outline: none;
             border-color: var(--chat-color-primary);
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-        }
-
-        .chat-assist-widget .chat-textarea::placeholder {
-            color: var(--chat-color-text-light);
         }
 
         .chat-assist-widget .chat-submit {
@@ -420,16 +364,6 @@
             justify-content: center;
             flex-shrink: 0;
             box-shadow: var(--chat-shadow-sm);
-        }
-
-        .chat-assist-widget .chat-submit:hover {
-            transform: scale(1.05);
-            box-shadow: var(--chat-shadow-md);
-        }
-
-        .chat-assist-widget .chat-submit svg {
-            width: 22px;
-            height: 22px;
         }
 
         .chat-assist-widget .chat-launcher {
@@ -449,114 +383,91 @@
             align-items: center;
             justify-content: center;
             padding: 0;
-            right: 20px; /* Force right positioning */
-            left: auto; /* Ensure no left positioning */
-        }
-
-        .chat-assist-widget .chat-launcher.right-side {
             right: 20px;
-            left: auto;
         }
 
-        .chat-assist-widget .chat-launcher.left-side {
-            display: none !important; /* Completely hide any left-side launcher */
+        .chat-assist-widget .chat-notification {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 280px;
+            z-index: 998;
+            border: 1px solid #e5e7eb;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .chat-assist-widget .chat-notification.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .chat-assist-widget .chat-notification-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--chat-color-light);
+            flex-shrink: 0;
+        }
+
+        .chat-assist-widget .chat-notification-content {
+            flex: 1;
+        }
+
+        .chat-assist-widget .chat-notification-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--chat-color-text);
+            margin: 0 0 4px 0;
+            line-height: 1.3;
+        }
+
+        .chat-assist-widget .chat-notification-subtitle {
+            font-size: 13px;
+            color: var(--chat-color-text-light);
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .chat-assist-widget .chat-notification-close {
+            background: none;
+            border: none;
+            color: var(--chat-color-text-light);
+            cursor: pointer;
+            font-size: 18px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--chat-transition);
+            flex-shrink: 0;
+        }
+
+        .chat-assist-widget .chat-notification-close:hover {
+            background: #f3f4f6;
+            color: var(--chat-color-text);
         }
 
         @media (max-width: 480px) {
-            .chat-assist-widget .chat-launcher {
-                bottom: 16px;
-                width: 52px;
-                height: 52px;
-                right: 16px; /* Force right positioning on mobile */
-                left: auto;
-            }
-            
-            .chat-assist-widget .chat-launcher.right-side {
+            .chat-assist-widget .chat-notification {
                 right: 16px;
-                left: auto;
+                left: 16px;
+                max-width: none;
+                bottom: 90px;
             }
-            
-            .chat-assist-widget .chat-launcher.left-side {
-                display: none !important;
-            }
-        }
-
-        .chat-assist-widget .chat-launcher:hover {
-            transform: scale(1.05);
-            box-shadow: var(--chat-shadow-lg);
-        }
-
-        .chat-assist-widget .chat-launcher svg {
-            width: 24px;
-            height: 24px;
-        }
-        
-        .chat-assist-widget .chat-launcher-text {
-            font-weight: 600;
-            font-size: 15px;
-            white-space: nowrap;
-        }
-
-        .chat-assist-widget .chat-footer {
-            padding: 10px;
-            text-align: center;
-            background: var(--chat-color-surface);
-            border-top: 1px solid var(--chat-color-light);
-            display: none;
-        }
-
-        .chat-assist-widget .chat-footer-link {
-            color: var(--chat-color-primary);
-            text-decoration: none;
-            font-size: 12px;
-            opacity: 0.8;
-            transition: var(--chat-transition);
-            font-family: inherit;
-            display: none;
-        }
-
-        .chat-assist-widget .chat-footer-link:hover {
-            opacity: 1;
-        }
-
-        .chat-assist-widget .suggested-questions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin: 12px 0;
-            align-self: flex-start;
-            max-width: 85%;
-        }
-
-        .chat-assist-widget .suggested-question-btn {
-            background: #f3f4f6;
-            border: 1px solid var(--chat-color-light);
-            border-radius: var(--chat-radius-md);
-            padding: 10px 14px;
-            text-align: left;
-            font-size: 13px;
-            color: var(--chat-color-text);
-            cursor: pointer;
-            transition: var(--chat-transition);
-            font-family: inherit;
-            line-height: 1.4;
-        }
-
-        .chat-assist-widget .suggested-question-btn:hover {
-            background: var(--chat-color-light);
-            border-color: var(--chat-color-primary);
-        }
-
-        .chat-assist-widget .chat-link {
-            color: var(--chat-color-primary);
-            text-decoration: underline;
-            word-break: break-all;
-            transition: var(--chat-transition);
-        }
-
-        .chat-assist-widget .chat-link:hover {
-            color: var(--chat-color-secondary);
-            text-decoration: underline;
         }
 
         .chat-assist-widget .user-registration {
@@ -581,7 +492,6 @@
             color: var(--chat-color-text);
             margin-bottom: 16px;
             line-height: 1.3;
-            letter-spacing: 0;
         }
 
         .chat-assist-widget .registration-form {
@@ -611,12 +521,6 @@
             font-family: inherit;
             font-size: 14px;
             transition: var(--chat-transition);
-        }
-
-        @media (max-width: 480px) {
-            .chat-assist-widget .form-input {
-                padding: 10px 12px;
-            }
         }
 
         .chat-assist-widget .form-input:focus {
@@ -651,18 +555,36 @@
             font-weight: 600;
             font-family: inherit;
             box-shadow: var(--chat-shadow-md);
-            letter-spacing: inherit;
         }
 
-        .chat-assist-widget .submit-registration:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--chat-shadow-lg);
+        .chat-assist-widget .suggested-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 12px 0;
+            align-self: flex-start;
+            max-width: 85%;
         }
 
-        .chat-assist-widget .submit-registration:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
+        .chat-assist-widget .suggested-question-btn {
+            background: #f3f4f6;
+            border: 1px solid var(--chat-color-light);
+            border-radius: var(--chat-radius-md);
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 13px;
+            color: var(--chat-color-text);
+            cursor: pointer;
+            transition: var(--chat-transition);
+            font-family: inherit;
+            line-height: 1.4;
+        }
+
+        .chat-assist-widget .chat-link {
+            color: var(--chat-color-primary);
+            text-decoration: underline;
+            word-break: break-all;
+            transition: var(--chat-transition);
         }
     `;
     document.head.appendChild(widgetStyles);
@@ -753,7 +675,6 @@
 
     const t = settings.translations[settings.language] || settings.translations.en;
 
-    // Session tracking
     let conversationId = '';
     let isWaitingForResponse = false;
 
@@ -764,15 +685,11 @@
     // Apply custom colors
     widgetRoot.style.setProperty('--chat-widget-primary', settings.style.primaryColor);
     widgetRoot.style.setProperty('--chat-widget-secondary', settings.style.secondaryColor);
-    widgetRoot.style.setProperty('--chat-widget-tertiary', settings.style.secondaryColor);
-    widgetRoot.style.setProperty('--chat-widget-surface', settings.style.backgroundColor);
-    widgetRoot.style.setProperty('--chat-widget-text', settings.style.fontColor);
 
     // Create chat panel
     const chatWindow = document.createElement('div');
-    chatWindow.className = `chat-window right-side`;
+    chatWindow.className = 'chat-window right-side';
     
-    // Create welcome screen with header
     const welcomeScreenHTML = `
         <div class="chat-header">
             <img class="chat-header-logo" src="${settings.branding.logo}" alt="${settings.branding.name}">
@@ -793,12 +710,12 @@
             <h2 class="registration-title">${t.registrationTitle}</h2>
             <form class="registration-form">
                 <div class="form-field">
-                    <label class="form-label" for="chat-user-name">${t.nameLabel}</label>
+                    <label class="form-label">${t.nameLabel}</label>
                     <input type="text" id="chat-user-name" class="form-input" placeholder="${t.namePlaceholder}" required>
                     <div class="error-text" id="name-error"></div>
                 </div>
                 <div class="form-field">
-                    <label class="form-label" for="chat-user-email">${t.emailLabel}</label>
+                    <label class="form-label">${t.emailLabel}</label>
                     <input type="email" id="chat-user-email" class="form-input" placeholder="${t.emailPlaceholder}" required>
                     <div class="error-text" id="email-error"></div>
                 </div>
@@ -807,7 +724,6 @@
         </div>
     `;
 
-    // Create chat interface without duplicating the header
     const chatInterfaceHTML = `
         <div class="chat-body">
             <div class="chat-messages"></div>
@@ -820,25 +736,34 @@
                     </svg>
                 </button>
             </div>
-            <div class="chat-footer">
-                <a class="chat-footer-link" href="${settings.branding.poweredBy.link}" target="_blank">${settings.branding.poweredBy.text}</a>
-            </div>
         </div>
     `;
     
     chatWindow.innerHTML = welcomeScreenHTML + chatInterfaceHTML;
     
-    // Create toggle button - back to original
     const launchButton = document.createElement('button');
-    launchButton.className = `chat-launcher right-side`;
+    launchButton.className = 'chat-launcher right-side';
     launchButton.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 32" fill="currentColor" width="20" height="23">
+            <path d="M28 16c0 8.837-6.269 16-14 16a15.62 15.62 0 01-6.344-1.318L0 32l2.318-7.656A15.923 15.923 0 010 16C0 7.163 6.269 0 14 0s14 7.163 14 16z"/>
+            <path d="M6 18.5a1.5 1.5 0 111.5-1.5 1.5 1.5 0 01-1.5 1.5zm8 0a1.5 1.5 0 111.5-1.5 1.5 1.5 0 01-1.5 1.5zm8 0a1.5 1.5 0 111.5-1.5 1.5 1.5 0 01-1.5 1.5z" fill="white"/>
         </svg>`;
     
-    // Add elements to DOM
+    // Create notification
+    const chatNotification = document.createElement('div');
+    chatNotification.className = 'chat-notification';
+    chatNotification.innerHTML = `
+        <img class="chat-notification-avatar" src="${ANNA_AVATAR_URL}" alt="Anna">
+        <div class="chat-notification-content">
+            <p class="chat-notification-title">${settings.language === 'pt' ? 'Precisa de ajuda?' : 'Need help?'}</p>
+            <p class="chat-notification-subtitle">${settings.language === 'pt' ? 'Respondemos em 5 minutos' : 'We respond within 5 minutes'}</p>
+        </div>
+        <button class="chat-notification-close">×</button>
+    `;
+    
     widgetRoot.appendChild(chatWindow);
     widgetRoot.appendChild(launchButton);
+    widgetRoot.appendChild(chatNotification);
     document.body.appendChild(widgetRoot);
 
     // Get DOM elements
@@ -847,8 +772,6 @@
     const messagesContainer = chatWindow.querySelector('.chat-messages');
     const messageTextarea = chatWindow.querySelector('.chat-textarea');
     const sendButton = chatWindow.querySelector('.chat-submit');
-    
-    // Registration form elements
     const registrationForm = chatWindow.querySelector('.registration-form');
     const userRegistration = chatWindow.querySelector('.user-registration');
     const chatWelcome = chatWindow.querySelector('.chat-welcome');
@@ -857,13 +780,20 @@
     const nameError = chatWindow.querySelector('#name-error');
     const emailError = chatWindow.querySelector('#email-error');
 
-    // Helper function to generate unique session ID
     function createSessionId() {
         return crypto.randomUUID();
     }
 
-    // Create typing indicator element - back to original without avatar
+    // Create typing indicator with Anna's avatar
     function createTypingIndicator() {
+        const container = document.createElement('div');
+        container.className = 'typing-container';
+        
+        const avatar = document.createElement('img');
+        avatar.className = 'bot-avatar';
+        avatar.src = ANNA_AVATAR_URL;
+        avatar.alt = 'Anna';
+        
         const indicator = document.createElement('div');
         indicator.className = 'typing-indicator';
         indicator.innerHTML = `
@@ -871,10 +801,13 @@
             <div class="typing-dot"></div>
             <div class="typing-dot"></div>
         `;
-        return indicator;
+        
+        container.appendChild(avatar);
+        container.appendChild(indicator);
+        return container;
     }
 
-    // Create bot message with Anna's avatar - only change is here
+    // Create bot message with Anna's avatar
     function createBotMessage(messageText) {
         const container = document.createElement('div');
         container.className = 'bot-message-container';
@@ -893,44 +826,34 @@
         return container;
     }
 
-    // Function to convert URLs in text to clickable links
     function linkifyText(text) {
-        // URL pattern that matches http, https, ftp links
         const urlPattern = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-        
-        // Convert URLs to HTML links
         return text.replace(urlPattern, function(url) {
             return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="chat-link">${url}</a>`;
         });
     }
 
-    // Show registration form
     function showRegistrationForm() {
         chatWelcome.style.display = 'none';
         userRegistration.classList.add('active');
     }
 
-    // Validate email format
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
 
-    // Handle registration form submission
     async function handleRegistration(event) {
         event.preventDefault();
         
-        // Reset error messages
         nameError.textContent = '';
         emailError.textContent = '';
         nameInput.classList.remove('error');
         emailInput.classList.remove('error');
         
-        // Get values
         const name = nameInput.value.trim();
         const email = emailInput.value.trim();
         
-        // Validate
         let isValid = true;
         
         if (!name) {
@@ -951,78 +874,50 @@
         
         if (!isValid) return;
         
-        // Initialize conversation with user data
         conversationId = createSessionId();
         
-        // First, load the session
         const sessionData = [{
             action: "loadPreviousSession",
             sessionId: conversationId,
             route: settings.webhook.route,
-            metadata: {
-                userId: email,
-                userName: name,
-                language: settings.language
-            }
+            metadata: { userId: email, userName: name, language: settings.language }
         }];
 
         try {
-            // Hide registration form, show chat interface
             userRegistration.classList.remove('active');
             chatBody.classList.add('active');
             
-            // Show typing indicator
             const typingIndicator = createTypingIndicator();
             messagesContainer.appendChild(typingIndicator);
             
-            // Load session
             const sessionResponse = await fetch(settings.webhook.url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(sessionData)
             });
-            
-            const sessionResponseData = await sessionResponse.json();
-            
-            // Send user info as first message
-            const userInfoMessage = `Name: ${name}\nEmail: ${email}`;
             
             const userInfoData = {
                 action: "sendMessage",
                 sessionId: conversationId,
                 route: settings.webhook.route,
-                chatInput: userInfoMessage,
-                metadata: {
-                    userId: email,
-                    userName: name,
-                    language: settings.language,
-                    isUserInfo: true
-                }
+                chatInput: `Name: ${name}\nEmail: ${email}`,
+                metadata: { userId: email, userName: name, language: settings.language, isUserInfo: true }
             };
             
-            // Send user info
             const userInfoResponse = await fetch(settings.webhook.url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(userInfoData)
             });
             
             const userInfoResponseData = await userInfoResponse.json();
-            
-            // Remove typing indicator
             messagesContainer.removeChild(typingIndicator);
             
-            // Display initial bot message with Anna's avatar
             const messageText = Array.isArray(userInfoResponseData) ? 
                 userInfoResponseData[0].output : userInfoResponseData.output;
             const botMessage = createBotMessage(messageText);
             messagesContainer.appendChild(botMessage);
             
-            // Add sample questions if configured
             if (settings.suggestedQuestions && Array.isArray(settings.suggestedQuestions) && settings.suggestedQuestions.length > 0) {
                 const suggestedQuestionsContainer = document.createElement('div');
                 suggestedQuestionsContainer.className = 'suggested-questions';
@@ -1033,7 +928,6 @@
                     questionButton.textContent = question;
                     questionButton.addEventListener('click', () => {
                         submitMessage(question);
-                        // Remove the suggestions after clicking
                         if (suggestedQuestionsContainer.parentNode) {
                             suggestedQuestionsContainer.parentNode.removeChild(suggestedQuestionsContainer);
                         }
@@ -1047,27 +941,19 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         } catch (error) {
             console.error('Registration error:', error);
+            const indicator = messagesContainer.querySelector('.typing-container');
+            if (indicator) messagesContainer.removeChild(indicator);
             
-            // Remove typing indicator if it exists
-            const indicator = messagesContainer.querySelector('.typing-indicator');
-            if (indicator) {
-                messagesContainer.removeChild(indicator);
-            }
-            
-            // Show error message with Anna's avatar
             const errorMessage = createBotMessage(t.connectionError);
             messagesContainer.appendChild(errorMessage);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
     }
 
-    // Send a message to the webhook
     async function submitMessage(messageText) {
         if (isWaitingForResponse) return;
-        
         isWaitingForResponse = true;
         
-        // Get user info if available
         const email = nameInput ? nameInput.value.trim() : "";
         const name = emailInput ? emailInput.value.trim() : "";
         
@@ -1076,20 +962,14 @@
             sessionId: conversationId,
             route: settings.webhook.route,
             chatInput: messageText,
-            metadata: {
-                userId: email,
-                userName: name,
-                language: settings.language
-            }
+            metadata: { userId: email, userName: name, language: settings.language }
         };
 
-        // Display user message
         const userMessage = document.createElement('div');
         userMessage.className = 'chat-bubble user-bubble';
         userMessage.textContent = messageText;
         messagesContainer.appendChild(userMessage);
         
-        // Show typing indicator
         const typingIndicator = createTypingIndicator();
         messagesContainer.appendChild(typingIndicator);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -1097,29 +977,21 @@
         try {
             const response = await fetch(settings.webhook.url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestData)
             });
             
             const responseData = await response.json();
-            
-            // Remove typing indicator
             messagesContainer.removeChild(typingIndicator);
             
-            // Display bot response with Anna's avatar
             const responseText = Array.isArray(responseData) ? responseData[0].output : responseData.output;
             const botMessage = createBotMessage(responseText);
             messagesContainer.appendChild(botMessage);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         } catch (error) {
             console.error('Message submission error:', error);
-            
-            // Remove typing indicator
             messagesContainer.removeChild(typingIndicator);
             
-            // Show error message with Anna's avatar
             const errorMessage = createBotMessage(t.sendError);
             messagesContainer.appendChild(errorMessage);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -1128,7 +1000,6 @@
         }
     }
 
-    // Auto-resize textarea as user types
     function autoResizeTextarea() {
         messageTextarea.style.height = 'auto';
         messageTextarea.style.height = (messageTextarea.scrollHeight > 120 ? 120 : messageTextarea.scrollHeight) + 'px';
@@ -1148,7 +1019,6 @@
     });
     
     messageTextarea.addEventListener('input', autoResizeTextarea);
-    
     messageTextarea.addEventListener('keypress', (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
@@ -1165,11 +1035,45 @@
         chatWindow.classList.toggle('visible');
     });
 
-    // Close button functionality
     const closeButtons = chatWindow.querySelectorAll('.chat-close-btn');
     closeButtons.forEach(button => {
         button.addEventListener('click', () => {
             chatWindow.classList.remove('visible');
         });
+    });
+
+    // Notification logic
+    const notificationCloseBtn = chatNotification.querySelector('.chat-notification-close');
+    let notificationDismissed = localStorage.getItem('chat-notification-dismissed') === 'true';
+    
+    // Show notification after a delay if not dismissed
+    if (!notificationDismissed) {
+        setTimeout(() => {
+            chatNotification.classList.add('visible');
+        }, 3000); // Show after 3 seconds
+    }
+    
+    // Hide notification when close button is clicked
+    notificationCloseBtn.addEventListener('click', () => {
+        chatNotification.classList.remove('visible');
+        localStorage.setItem('chat-notification-dismissed', 'true');
+        notificationDismissed = true;
+    });
+    
+    // Hide notification when chat is opened
+    launchButton.addEventListener('click', () => {
+        chatWindow.classList.toggle('visible');
+        if (chatWindow.classList.contains('visible')) {
+            chatNotification.classList.remove('visible');
+        }
+    });
+    
+    // Show notification again when chat is closed (if not permanently dismissed)
+    chatWindow.addEventListener('transitionend', () => {
+        if (!chatWindow.classList.contains('visible') && !notificationDismissed) {
+            setTimeout(() => {
+                chatNotification.classList.add('visible');
+            }, 2000); // Show again after 2 seconds of closing chat
+        }
     });
 })(); 
