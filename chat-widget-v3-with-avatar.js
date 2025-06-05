@@ -552,11 +552,19 @@
             text-decoration: underline;
             word-break: break-all;
             transition: var(--chat-transition);
+            font-weight: 600;
+            background: rgba(117, 134, 210, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 2px 0;
         }
 
         .chat-assist-widget .chat-link:hover {
             color: var(--chat-color-secondary);
             text-decoration: underline;
+            background: rgba(117, 134, 210, 0.2);
+            transform: translateY(-1px);
         }
 
         .chat-assist-widget .user-registration {
@@ -940,12 +948,24 @@
 
     // Function to convert URLs in text to clickable links
     function linkifyText(text) {
-        // URL pattern that matches http, https, ftp links
-        const urlPattern = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        // Enhanced URL pattern that matches various URL formats
+        const urlPattern = /(https?:\/\/[^\s<>"`{}\[\]\\^]+|www\.[^\s<>"`{}\[\]\\^]+\.[a-z]{2,}[^\s<>"`{}\[\]\\^]*)/gim;
         
-        // Convert URLs to HTML links
         return text.replace(urlPattern, function(url) {
-            return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="chat-link">${url}</a>`;
+            // Clean up URL (remove trailing punctuation that might not be part of URL)
+            const cleanUrl = url.replace(/[.,;!?]+$/, '');
+            
+            // Add protocol if missing
+            const href = cleanUrl.startsWith('http') ? cleanUrl : 'https://' + cleanUrl;
+            
+            // Create a shorter display text for long URLs
+            let displayText = cleanUrl;
+            if (cleanUrl.length > 50) {
+                const domain = cleanUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
+                displayText = domain + '/...';
+            }
+            
+            return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="chat-link" title="${cleanUrl}">${displayText}</a>`;
         });
     }
 
